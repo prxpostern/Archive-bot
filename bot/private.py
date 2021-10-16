@@ -1,8 +1,8 @@
 from pyrogram import Client, filters, types
-
+import os
 from zipfile import ZipFile
 from os import remove, rmdir, mkdir
-
+from file_handler import send_to_transfersh_async, progress, progressb
 from utils import zip_work, dir_work, up_progress, list_dir, Msg, db_session, User, commit
 
 
@@ -99,10 +99,12 @@ def stop_zip(_, msg: types.Message):
     stsmsg.edit_text(Msg.uploading)  # change status-msg to "UPLOADING"
 
     try:
-        msg.reply_document(zip_path, progress=up_progress,  # send the zip-archive
-                           progress_args=(stsmsg,))
-    except ValueError as e:
-        msg.reply(Msg.unknow_error.format(str(e)))
+        name = os.path.basename(zip_path)
+        download_link, final_date, size = await send_to_transfersh_async(zip_path, msg)
+        await msg.edit(f"Successfully Uploaded to `Transfer.sh` !\n\n**Name: **`{name}`\n\n**Size:** {size}\n\n**Link:** `{download_link}` \n **ExpireDate:** {final_date}")
+    except Exception as e:
+        print(e)
+        await msg.edit(f"Uploading to transfer.sh Failed \n\n **Error:** {e}")
 
     stsmsg.delete()  # delete the status-msg
     remove(zip_path)  # delete the zip-archive
