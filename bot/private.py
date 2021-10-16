@@ -100,7 +100,7 @@ def stop_zip(_, msg: types.Message):
 
     try:
         name = os.path.basename(zip_path)
-        download_link, final_date, size = await send_to_transfersh_async(zip_path, msg)
+        download_link, final_date, size = send_to_transfersh_async(zip_path, msg)
         await msg.edit(f"Successfully Uploaded to `Transfer.sh` !\n\n**Name: **`{name}`\n\n**Size:** {size}\n\n**Link:** `{download_link}` \n **ExpireDate:** {final_date}")
     except Exception as e:
         print(e)
